@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment-name
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mysql-app
+  template:
+    metadata:
+      labels:
+        app: mysql-app
+    spec:
+      containers:
+        - name: mysql-container-name
+          image: mysql:5.6
+          env: #environment variable passed to the container
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-name #name of the secret
+                  key: db-password # key defined in the secret
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-peristent-storage
+              mountPath: /var/lib/mysql
+            - name: user-dbcreation-script-as-configmap
+              mountPath: /docker-entrypoint-initdb.d #https://hub.docker.com/_/mysql Refer Initializing a fresh instance
+      volumes:
+        - name: mysql-peristent-storage
+          persistentVolumeClaim:
+            claimName: persistant-volume-claim-name
+        - name: user-dbcreation-script-as-configmap
+          configMap:
+            name: usermanagement-db-script-config-map-name

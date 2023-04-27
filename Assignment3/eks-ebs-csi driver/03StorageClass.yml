@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-storage-class-name
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
