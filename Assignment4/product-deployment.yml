@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-product-deployment
+  labels:
+    app: my-product-deployment-label # LABEL-A: <--this label is to manage the deployment itself. 
+                                     #this may be used to filter the deployment based on this label.
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-product-service-pod    #LABEL-B:  <--  field defines how the Deployment finds which Pods to manage.
+  template:
+    metadata:
+      labels:
+        app: my-product-service-pod   #LABEL-C: <--this is the label of the pod, this must be same as LABEL-B
+    spec:
+      containers:
+      - name: eks-totorial-product-service
+        image: mail2prasanthv/eks-rds-product-service:4.0 #Container name in the docker hub
+        ports:
+        - containerPort: 8080 # spring boot app runs on port 8080
